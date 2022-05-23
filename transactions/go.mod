@@ -1,4 +1,4 @@
-module CardsAndTransactions/transactions
+module github.com/antonOO/CardsAndTransactions/transactions
 
 go 1.17
 

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"CardsAndTransactions/transactions"
 	"fmt"
+	transactions "github.com/antonOO/CardsAndTransactions/transactions"
 	"html"
 	"log"
 	"net/http"
