@@ -77,6 +77,10 @@ func (c *Client) ReceiveTransaction(id int) error {
 	}
 	card := c.cardRegistry[id]
 	card.LastUsed = time.Now()
+	if card.IsActive {
+		defer c.lock.Unlock()
+		return nil
+	}
 
 	go func() {
 		defer c.lock.Unlock()

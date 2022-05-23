@@ -87,9 +87,9 @@ func TestClient_GetActiveCards_AboveLimit(t *testing.T) {
 	client.AddCard(card3)
 
 	client.ReceiveTransaction(1111111111111111)
-	time.Sleep(100)
+	time.Sleep(1 * time.Second)
 	client.ReceiveTransaction(2222222222222222)
-	time.Sleep(100)
+	time.Sleep(1 * time.Second)
 	client.ReceiveTransaction(3333333333333333)
 
 	// Delay check and force reschedule, so update is made
@@ -100,6 +100,29 @@ func TestClient_GetActiveCards_AboveLimit(t *testing.T) {
 	assert.Equal(t, ACTIVE_CARDS_LIMIT, len(cards))
 	// card1 is last used
 	assert.False(t, card1.IsActive)
+}
+
+func TestClient_GetActiveCards_SameCardActivation(t *testing.T) {
+	ACTIVE_CARDS_LIMIT = 2
+	client := NewClient()
+	card1, _ := NewCard(1111111111111111)
+	card2, _ := NewCard(2222222222222222)
+	client.AddCard(card1)
+	client.AddCard(card2)
+
+	client.ReceiveTransaction(1111111111111111)
+	time.Sleep(1 * time.Second)
+	client.ReceiveTransaction(2222222222222222)
+	client.ReceiveTransaction(2222222222222222)
+
+	// Delay check and force reschedule, so update is made
+	runtime.Gosched()
+	time.Sleep(1 * time.Second)
+
+	cards := client.GetActiveCards()
+	assert.Equal(t, ACTIVE_CARDS_LIMIT, len(cards))
+	// card1 is last used
+	assert.True(t, card1.IsActive)
 }
 
 func TestClient_GetActiveCards_Concurrent(t *testing.T) {
