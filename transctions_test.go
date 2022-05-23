@@ -49,7 +49,7 @@ func TestClient_ReceiveTransaction(t *testing.T) {
 
 	// Delay check and force reschedule, so update is made
 	runtime.Gosched()
-	time.Sleep(100)
+	time.Sleep(1 * time.Second)
 
 	assert.NotNil(t, card.lastUsed)
 	assert.True(t, card.isActive)
@@ -70,7 +70,7 @@ func TestClient_GetActiveCards(t *testing.T) {
 
 	// Delay check and force reschedule, so update is made
 	runtime.Gosched()
-	time.Sleep(100)
+	time.Sleep(1 * time.Second)
 
 	cards = client.GetActiveCards()
 	assert.Equal(t, 1, len(cards))
@@ -94,7 +94,7 @@ func TestClient_GetActiveCards_AboveLimit(t *testing.T) {
 
 	// Delay check and force reschedule, so update is made
 	runtime.Gosched()
-	time.Sleep(100)
+	time.Sleep(1 * time.Second)
 
 	cards := client.GetActiveCards()
 	assert.Equal(t, ACTIVE_CARDS_LIMIT, len(cards))

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"sync"
-	"sync/atomic"
 	"time"
 )
 
@@ -31,28 +30,27 @@ func isIdValid(id int) bool {
 var ACTIVE_CARDS_LIMIT = 10
 
 type Client struct {
-	lock                       sync.Mutex
-	atomicCardRegistryAccessor atomic.Value
+	// Allows multiple reads to occur at the same time (blocked by a single update)
+	lock         sync.RWMutex
+	cardRegistry map[int]*Card
 }
 
 func NewClient() *Client {
-	var atomicCardRegistryAccessor atomic.Value
-	cardRegistry := make(map[int]*Card)
-	atomicCardRegistryAccessor.Store(cardRegistry)
-
 	return &Client{
-		atomicCardRegistryAccessor: atomicCardRegistryAccessor,
+		cardRegistry: make(map[int]*Card),
 	}
 }
 
-func (c *Client) getCardRegistry() map[int]*Card {
-	return c.atomicCardRegistryAccessor.Load().(map[int]*Card)
+func (c *Client) GetActiveCards() []*Card {
+	c.lock.RLock()
+	defer c.lock.RUnlock()
+	return c.getActiveCards()
 }
 
-// Guaranteed eventual consistency. If concurrent activation requests occur, immediate gets might contain old data
-func (c *Client) GetActiveCards() []*Card {
+// Should be called in a synced method
+func (c *Client) getActiveCards() []*Card {
 	cards := make([]*Card, 0, ACTIVE_CARDS_LIMIT)
-	for _, card := range c.getCardRegistry() {
+	for _, card := range c.cardRegistry {
 		if card.isActive {
 			cards = append(cards, card)
 		}
@@ -62,25 +60,22 @@ func (c *Client) GetActiveCards() []*Card {
 
 func (c *Client) AddCard(card *Card) error {
 	c.lock.Lock()
-	c.lock.Unlock()
-	cardRegistry := c.getCardRegistry()
-	if _, ok := cardRegistry[card.id]; ok {
+	defer c.lock.Unlock()
+	if _, ok := c.cardRegistry[card.id]; ok {
 		return fmt.Errorf("card with id - %v, already exists", card.id)
 	}
 
-	cardRegistry[card.id] = card
-	c.atomicCardRegistryAccessor.Store(cardRegistry)
+	c.cardRegistry[card.id] = card
 	return nil
 }
 
 // Immediately returns and delegates processing to another goroutine
 func (c *Client) ReceiveTransaction(id int) error {
 	c.lock.Lock()
-	cardRegistry := c.getCardRegistry()
-	if _, ok := cardRegistry[id]; !ok {
+	if _, ok := c.cardRegistry[id]; !ok {
 		return fmt.Errorf("Unkown card id - %v", id)
 	}
-	card := cardRegistry[id]
+	card := c.cardRegistry[id]
 	card.lastUsed = time.Now()
 
 	go func() {
@@ -92,7 +87,7 @@ func (c *Client) ReceiveTransaction(id int) error {
 }
 
 func (c *Client) deactivateCard() {
-	cards := c.GetActiveCards()
+	cards := c.getActiveCards()
 	if len(cards) < ACTIVE_CARDS_LIMIT {
 		return
 	}
