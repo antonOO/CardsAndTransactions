@@ -1,7 +1,7 @@
 ### Cards and transactions solution 
 
-The solution contains a module transaction, which introduces a Card and 
-Client data structures. 
+The solution contains a module transaction which introduces `Card` and 
+`Client` data structures. 
 
 All Client methods are synced and thread-safe. The method for retrieving 
 cards is also guarded, but reads may be concurrent. 
@@ -16,9 +16,10 @@ cards is also guarded, but reads may be concurrent.
 3. cd into /transactions - `go test ./...`
 
 Demo live: 
-repeat 1. and 2. 
-3. run the test server - `go run main.go`
-4. Experiment with requests similar to: 
+
+1. repeat 1. and 2. 
+2. run the test server - `go run main.go`
+3. Experiment with requests similar to: 
 
 ```
 $ curl -X POST localhost:8081/add-card -d '{"id": 1234567890123456}'
