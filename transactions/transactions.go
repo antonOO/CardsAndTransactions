@@ -8,19 +8,19 @@ import (
 )
 
 type Card struct {
-	id       int
-	lastUsed time.Time
-	isActive bool
+	Id       int
+	LastUsed time.Time
+	IsActive bool
 }
 
 func NewCard(id int) (*Card, error) {
 	if isIdValid(id) {
 		return &Card{
-			id:       id,
-			isActive: false,
+			Id:       id,
+			IsActive: false,
 		}, nil
 	}
-	return nil, fmt.Errorf("invalid card ID")
+	return nil, fmt.Errorf("invalid card Id")
 }
 
 func isIdValid(id int) bool {
@@ -51,7 +51,7 @@ func (c *Client) GetActiveCards() []*Card {
 func (c *Client) getActiveCards() []*Card {
 	cards := make([]*Card, 0, ACTIVE_CARDS_LIMIT)
 	for _, card := range c.cardRegistry {
-		if card.isActive {
+		if card.IsActive {
 			cards = append(cards, card)
 		}
 	}
@@ -61,11 +61,11 @@ func (c *Client) getActiveCards() []*Card {
 func (c *Client) AddCard(card *Card) error {
 	c.lock.Lock()
 	defer c.lock.Unlock()
-	if _, ok := c.cardRegistry[card.id]; ok {
-		return fmt.Errorf("card with id - %v, already exists", card.id)
+	if _, ok := c.cardRegistry[card.Id]; ok {
+		return fmt.Errorf("card with Id - %v, already exists", card.Id)
 	}
 
-	c.cardRegistry[card.id] = card
+	c.cardRegistry[card.Id] = card
 	return nil
 }
 
@@ -73,15 +73,15 @@ func (c *Client) AddCard(card *Card) error {
 func (c *Client) ReceiveTransaction(id int) error {
 	c.lock.Lock()
 	if _, ok := c.cardRegistry[id]; !ok {
-		return fmt.Errorf("Unkown card id - %v", id)
+		return fmt.Errorf("Unkown card Id - %v", id)
 	}
 	card := c.cardRegistry[id]
-	card.lastUsed = time.Now()
+	card.LastUsed = time.Now()
 
 	go func() {
 		defer c.lock.Unlock()
 		c.deactivateCard()
-		card.isActive = true
+		card.IsActive = true
 	}()
 	return nil
 }
@@ -94,9 +94,9 @@ func (c *Client) deactivateCard() {
 
 	lastUsedCard := cards[0]
 	for _, card := range cards {
-		if lastUsedCard.lastUsed.After(card.lastUsed) {
+		if lastUsedCard.LastUsed.After(card.LastUsed) {
 			lastUsedCard = card
 		}
 	}
-	lastUsedCard.isActive = false
+	lastUsedCard.IsActive = false
 }

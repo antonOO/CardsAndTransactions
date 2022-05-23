@@ -51,8 +51,8 @@ func TestClient_ReceiveTransaction(t *testing.T) {
 	runtime.Gosched()
 	time.Sleep(1 * time.Second)
 
-	assert.NotNil(t, card.lastUsed)
-	assert.True(t, card.isActive)
+	assert.NotNil(t, card.LastUsed)
+	assert.True(t, card.IsActive)
 }
 
 func TestClient_GetActiveCards(t *testing.T) {
@@ -99,7 +99,7 @@ func TestClient_GetActiveCards_AboveLimit(t *testing.T) {
 	cards := client.GetActiveCards()
 	assert.Equal(t, ACTIVE_CARDS_LIMIT, len(cards))
 	// card1 is last used
-	assert.False(t, card1.isActive)
+	assert.False(t, card1.IsActive)
 }
 
 func TestClient_GetActiveCards_Concurrent(t *testing.T) {
