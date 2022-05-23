@@ -1,5 +1,7 @@
 github.com/antonOO/CardsAndTransactions/transactions v0.0.0-20220523115905-d7f96a267e6d h1:yZc7wPkiCoUzmWhFmUYK+3a23HujaMjw2lxy+n4cJmw=
 github.com/antonOO/CardsAndTransactions/transactions v0.0.0-20220523115905-d7f96a267e6d/go.mod h1:wYPyjnq2RF5mEemAAHJRPk1+Nkfc90HlSYEpWhWaOEA=
+github.com/antonOO/CardsAndTransactions/transactions v0.0.0-20220523130202-d7ca9199df57 h1:2Nz5UA6r723ITWy8Lgdk7CX0mvITdfY/sVAWhPo6sGI=
+github.com/antonOO/CardsAndTransactions/transactions v0.0.0-20220523130202-d7ca9199df57/go.mod h1:wYPyjnq2RF5mEemAAHJRPk1+Nkfc90HlSYEpWhWaOEA=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

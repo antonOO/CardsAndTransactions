@@ -32,7 +32,11 @@ func main() {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		client.AddCard(card)
+		err = client.AddCard(card)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 		fmt.Fprintf(w, "Added")
 	})
 
@@ -43,7 +47,11 @@ func main() {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		client.ReceiveTransaction(cardDto.Id)
+		err = client.ReceiveTransaction(cardDto.Id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 		fmt.Fprintf(w, "Activated")
 	})
 
